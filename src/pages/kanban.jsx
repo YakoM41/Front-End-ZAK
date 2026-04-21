@@ -1,8 +1,8 @@
 // Dans votre composant de page (par exemple, une liste de tâches)
 import { TaskDetailModal } from "@/components/modal/task_detail_modal";
+import { TaskCard } from "@/components/kanban/TaskCard";
 import { useState } from "react";
 
-// Renommé en Kanban et exporté par défaut pour correspondre à App.jsx
 const Kanban = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -20,12 +20,13 @@ const Kanban = () => {
 
     return (
         <div>
-            {/* Ce bouton est un exemple pour montrer comment ouvrir la modale */}
+            <h1>Kanban</h1>
+            < TaskCard/>
+            {/* ouvrir modal */}
             <button onClick={() => setIsModalOpen(true)}>
                 Voir les détails de la tâche
             </button>
-
-            {/* La modale elle-même */}
+            <TaskCard task={selectedTask} />
             <TaskDetailModal
                 isOpen={isModalOpen}
                 onOpenChange={setIsModalOpen}
