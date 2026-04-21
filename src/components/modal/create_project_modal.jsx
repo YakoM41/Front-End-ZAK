@@ -27,11 +27,15 @@ import {
     InputGroupTextarea,
 } from "@/components/ui/input-group"
 
-export function CreateProjectModal({ isOpen, setIsOpen }) {
+import { createProject } from "../../services/projectService"
+
+// Ajout de la prop onSuccess pour mettre à jour la liste dans le parent
+export function CreateProjectModal({ isOpen, setIsOpen, onSuccess }) {
     const [projectName, setProjectName] = React.useState("")
     const [projectDescription, setProjectDescription] = React.useState("")
+    const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
 
         // Simple validation
@@ -45,20 +49,28 @@ export function CreateProjectModal({ isOpen, setIsOpen }) {
             description: projectDescription,
         }
 
-        // TODO: Replace with your actual API call
-        toast("You submitted the following values:", {
-            description: (
-                <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-code-foreground">
-          <code>{JSON.stringify(projectData, null, 2)}</code>
-        </pre>
-            ),
-            position: "bottom-right",
-        })
+        setIsSubmitting(true)
+        try {
+            // Appel à l'API
+            const newProject = await createProject(projectData)
+            
+            toast.success("Projet créé avec succès !")
+            
+            // Si le composant parent a fourni une fonction de callback, on l'appelle
+            if (onSuccess) {
+                onSuccess(newProject)
+            }
 
-        // Reset form and close modal
-        setProjectName("")
-        setProjectDescription("")
-        if (setIsOpen) setIsOpen(false)
+            // Reset form and close modal
+            setProjectName("")
+            setProjectDescription("")
+            if (setIsOpen) setIsOpen(false)
+        } catch (error) {
+            toast.error("Erreur lors de la création du projet.")
+            console.error(error)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
@@ -88,6 +100,7 @@ export function CreateProjectModal({ isOpen, setIsOpen }) {
                                 onChange={(e) => setProjectName(e.target.value)}
                                 placeholder="My awesome project"
                                 autoComplete="off"
+                                disabled={isSubmitting}
                             />
                         </Field>
                         <Field>
@@ -102,6 +115,7 @@ export function CreateProjectModal({ isOpen, setIsOpen }) {
                                     placeholder="A short description of what this project is about."
                                     rows={4}
                                     className="min-h-20 resize-none"
+                                    disabled={isSubmitting}
                                 />
                                 <InputGroupAddon align="block-end">
                                     <InputGroupText className="tabular-nums">
@@ -113,11 +127,11 @@ export function CreateProjectModal({ isOpen, setIsOpen }) {
                     </FieldGroup>
                 </form>
                 <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => setIsOpen && setIsOpen(false)}>
+                    <Button type="button" variant="outline" onClick={() => setIsOpen && setIsOpen(false)} disabled={isSubmitting}>
                         Cancel
                     </Button>
-                    <Button type="submit" form="create-project-form">
-                        Create
+                    <Button type="submit" form="create-project-form" disabled={isSubmitting}>
+                        {isSubmitting ? "Creating..." : "Create"}
                     </Button>
                 </DialogFooter>
             </DialogContent>
