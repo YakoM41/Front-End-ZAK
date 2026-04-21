@@ -1,18 +1,26 @@
 import Footer from '/src/components/footer/footer.jsx';
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Importez useNavigate
 import { Button } from "@/components/ui/button";
+import { useAuth } from '../contexte/AuthContext'; // Importez useAuth
 
 const Home = () => {
-    // État local pour le formulaire (à relier plus tard à l'authentification)
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth(); // Utilisez le hook useAuth pour obtenir la fonction login
+    const navigate = useNavigate(); // Initialisez useNavigate
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Logique de connexion à implémenter ici
-        console.log("Tentative de connexion avec:", email, password);
-        // Exemple de redirection après succès : navigate("/dashboard");
+        // Ici, vous feriez normalement un appel API pour authentifier l'utilisateur
+        // Pour cet exemple, nous simulons une connexion réussie
+        if (email === "test@example.com" && password === "password") {
+            const userData = { email: email, name: "Utilisateur Test" };
+            login(userData); // Appelle la fonction login du contexte
+            navigate("/dashboard"); // Redirige vers le tableau de bord
+        } else {
+            alert("Identifiants incorrects. Utilisez test@example.com / password");
+        }
     };
 
     return (
