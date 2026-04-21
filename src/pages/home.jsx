@@ -1,70 +1,24 @@
 import Footer from '/src/components/footer/footer.jsx';
 import React, { useState } from "react";
-<<<<<<< main
-import { Link, useNavigate } from "react-router-dom"; // Importez useNavigate
-import { Button } from "@/components/ui/button";
-import { useAuth } from '../contexte/AuthContext'; // Importez useAuth
-
-const Home = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const { login } = useAuth(); // Utilisez le hook useAuth pour obtenir la fonction login
-    const navigate = useNavigate(); // Initialisez useNavigate
-=======
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { toast } from 'sonner';
-import { login } from '../services/authService';
+import { useAuth } from '../contexte/AuthContext';
 
 const Home = () => {
-    // État local pour le formulaire
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth();
     const navigate = useNavigate();
->>>>>>> main
 
-    const handleLogin = async (e) => {
+    const handleLogin = (e) => {
         e.preventDefault();
-<<<<<<< main
-        // Ici, vous feriez normalement un appel API pour authentifier l'utilisateur
-        // Pour cet exemple, nous simulons une connexion réussie
+        // Logique de connexion simulée pour le développement
         if (email === "test@example.com" && password === "password") {
             const userData = { email: email, name: "Utilisateur Test" };
-            login(userData); // Appelle la fonction login du contexte
-            navigate("/dashboard"); // Redirige vers le tableau de bord
+            login(userData);
+            navigate("/dashboard");
         } else {
             alert("Identifiants incorrects. Utilisez test@example.com / password");
-=======
-        
-        // Simple validation locale
-        if (!email || !password) {
-            toast.error("Veuillez remplir tous les champs.");
-            return;
-        }
-
-        setIsLoading(true);
-        try {
-            // Appel à l'API de login
-            const responseData = await login(email, password);
-            
-            // Si la connexion réussit, on peut par exemple stocker un token si le backend en renvoie un
-            if (responseData.token) {
-                localStorage.setItem('token', responseData.token);
-            }
-            
-            toast.success("Connexion réussie !");
-            
-            // Redirection vers le dashboard
-            navigate("/dashboard");
-
-        } catch (error) {
-            // Si l'erreur provient du backend, authService la gère et renvoie le message
-            toast.error(error.message || "Email ou mot de passe incorrect.");
-            console.error("Échec de la connexion:", error);
-        } finally {
-            setIsLoading(false);
->>>>>>> main
         }
     };
 
@@ -100,7 +54,6 @@ const Home = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
-                                        disabled={isLoading}
                                     />
                                 </div>
                                 
@@ -121,7 +74,6 @@ const Home = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        disabled={isLoading}
                                     />
                                 </div>
 
@@ -130,9 +82,8 @@ const Home = () => {
                                     type="submit"
                                     variant="amber"
                                     className="w-full py-3 px-4 shadow-lg shadow-amber-500/20"
-                                    disabled={isLoading}
                                 >
-                                    {isLoading ? "Connexion en cours..." : "Se connecter"}
+                                    Se connecter
                                 </Button>
                             </form>
 

@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, Settings, ChevronDown, ChevronRight } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, FolderKanban, Settings, ChevronDown, ChevronRight, LogOut, Plus } from 'lucide-react'; // Import LogOut and Plus
+import { CreateProjectModal } from '../modal/create_project_modal';
+import { useAuth } from '../../contexte/AuthContext'; // Import useAuth
 
 const Sidebar = ({ projects = [] }) => {
     const [isProjectsOpen, setIsProjectsOpen] = useState(true);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/'); // Redirige vers la page d'accueil après déconnexion
+    };
 
     return (
         <aside className="w-64 h-screen bg-tf-dark-bg text-tf-text-light flex flex-col border-r border-slate-700/50 sticky top-0">
@@ -50,13 +59,18 @@ const Sidebar = ({ projects = [] }) => {
                                     <span className="truncate">{project.project_name}</span>
                                 </Link>
                             ))}
+                            
+                            {/* Le bouton de création de la sidebar intègre directement la modale */}
+                            <div className="pl-3 mt-2">
+                                <CreateProjectModal />
+                            </div>
                         </div>
                     )}
                 </div>
             </nav>
 
-            {/* --- PIED DE SIDEBAR (Compte) --- */}
-            <div className="p-4 border-t border-slate-700/50">
+            {/* --- PIED DE SIDEBAR (Compte & Déconnexion) --- */}
+            <div className="p-4 border-t border-slate-700/50 space-y-2">
                 <Link 
                     to="/account"
                     className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
@@ -64,6 +78,13 @@ const Sidebar = ({ projects = [] }) => {
                     <Settings size={18} />
                     Mon Compte
                 </Link>
+                <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                >
+                    <LogOut size={18} />
+                    Déconnexion
+                </button>
             </div>
         </aside>
     );

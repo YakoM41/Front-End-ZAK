@@ -54,7 +54,7 @@ const Dashboard = () => {
             <Sidebar projects={projects} />
 
             {/* --- CONTENU PRINCIPAL --- */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden">
+            <main id="dashboard-content" className="flex-1 flex flex-col h-full overflow-hidden">
                 
                 {/* --- HEADER DU DASHBOARD --- */}
                 {/* On passe onProjectCreated ici pour que la modale puisse l'utiliser */}

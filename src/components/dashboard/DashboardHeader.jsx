@@ -1,11 +1,20 @@
 import React from 'react';
+import { Search, FileDown } from 'lucide-react'; // Importez l'icône FileDown
 import { CreateProjectModal } from '../modal/create_project_modal';
+import { Button } from "@/components/ui/button"; // Importez le composant Button
+import { exportToPdf } from '../tools/exportPdf'; // Importez la fonction d'export
 
 const DashboardHeader = ({ 
+    searchQuery, 
+    setSearchQuery, 
     isCreateModalOpen, 
-    setIsCreateModalOpen,
-    onProjectCreated
+    setIsCreateModalOpen 
 }) => {
+    const handleExport = () => {
+        // L'ID 'dashboard-content' devra être ajouté à la div principale du contenu du dashboard
+        exportToPdf('dashboard-content', 'dashboard-taskflow');
+    };
+
     return (
         <header className="bg-white border-b border-slate-200 px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-0 z-10 shadow-sm">
             
@@ -14,12 +23,29 @@ const DashboardHeader = ({
             </h1>
 
             <div className="flex items-center gap-4 w-full sm:w-auto">
+                {/* Barre de recherche */}
+                <div className="relative w-full sm:w-64 md:w-80">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Search className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Rechercher un projet..."
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-slate-50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all text-sm"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+
+                {/* Bouton Exporter PDF */}
+                <Button variant="outline" size="icon" onClick={handleExport} aria-label="Exporter en PDF">
+                    <FileDown className="h-5 w-5" />
+                </Button>
+
                 {/* Bouton Créer Projet */}
-                {/* On passe onProjectCreated à la modale */}
                 <CreateProjectModal 
                     isOpen={isCreateModalOpen} 
                     setIsOpen={setIsCreateModalOpen} 
-                    onSuccess={onProjectCreated}
                 />
             </div>
         </header>
