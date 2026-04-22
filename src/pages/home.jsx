@@ -3,22 +3,45 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from '../contexte/AuthContext';
+// On renomme l'import pour ne pas confondre avec la fonction login de AuthContext
+import { login as loginService } from '../services/authService'; 
+import { toast } from 'sonner';
 
 const Home = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth(); // login du contexte pour mettre à jour l'état global
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Logique de connexion simulée pour le développement
-        if (email === "test@example.com" && password === "password") {
-            const userData = { email: email, name: "Utilisateur Test" };
-            login(userData);
+        
+        if (!email || !password) {
+            toast.error("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            // 1. Appel à la vraie API via le service (qui fait le fetch POST)
+            const responseData = await loginService(email, password);
+            
+            // 2. Si succès, on passe les données utilisateur au contexte d'authentification
+            // L'API renvoie { message: 'Connexion réussie', user: { id_user, user_email, user_first_name, user_name } }
+            const userData = responseData.user || { email }; 
+            login(userData); // Met à jour 'isAuthenticated' à true dans ProtectedRoute
+            
+            toast.success("Connexion réussie !");
+            
+            // 3. Redirection vers le dashboard
             navigate("/dashboard");
-        } else {
-            alert("Identifiants incorrects. Utilisez test@example.com / password");
+
+        } catch (error) {
+            toast.error(error.message || "Identifiants incorrects.");
+            console.error("Échec de la connexion:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -54,6 +77,7 @@ const Home = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
+                                        disabled={isLoading}
                                     />
                                 </div>
                                 
@@ -74,6 +98,7 @@ const Home = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
+                                        disabled={isLoading}
                                     />
                                 </div>
 
@@ -82,8 +107,9 @@ const Home = () => {
                                     type="submit"
                                     variant="amber"
                                     className="w-full py-3 px-4 shadow-lg shadow-amber-500/20"
+                                    disabled={isLoading}
                                 >
-                                    Se connecter
+                                    {isLoading ? "Connexion en cours..." : "Se connecter"}
                                 </Button>
                             </form>
 

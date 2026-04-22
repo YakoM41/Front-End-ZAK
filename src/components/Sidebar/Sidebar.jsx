@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FolderKanban, Settings, ChevronDown, ChevronRight, LogOut, Plus } from 'lucide-react'; // Import LogOut and Plus
-import { CreateProjectModal } from '../modal/create_project_modal';
-import { useAuth } from '../../contexte/AuthContext'; // Import useAuth
+import { LayoutDashboard, FolderKanban, Settings, ChevronDown, ChevronRight, LogOut } from 'lucide-react'; 
+import { useAuth } from '../../contexte/AuthContext'; 
 
 const Sidebar = ({ projects = [] }) => {
     const [isProjectsOpen, setIsProjectsOpen] = useState(true);
@@ -49,21 +48,22 @@ const Sidebar = ({ projects = [] }) => {
 
                     {isProjectsOpen && (
                         <div className="space-y-1">
-                            {projects.map((project) => (
-                                <Link
-                                    key={project.id_project}
-                                    to={`/kanban/${project.id_project}`}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors pl-8"
-                                >
-                                    <FolderKanban size={16} />
-                                    <span className="truncate">{project.project_name}</span>
-                                </Link>
-                            ))}
-                            
-                            {/* Le bouton de création de la sidebar intègre directement la modale */}
-                            <div className="pl-3 mt-2">
-                                <CreateProjectModal />
-                            </div>
+                            {projects.map((project, index) => {
+                                // Sécurisation des données pour éviter les erreurs d'affichage et de warning React
+                                const projectId = project.id_project || project.id || `project-${index}`;
+                                const projectName = project.project_name || project.name || 'Nouveau Projet';
+                                
+                                return (
+                                    <Link
+                                        key={projectId}
+                                        to={`/kanban/${projectId}`}
+                                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors pl-8"
+                                    >
+                                        <FolderKanban size={16} />
+                                        <span className="truncate">{projectName}</span>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     )}
                 </div>

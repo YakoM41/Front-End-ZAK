@@ -12,39 +12,41 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Fonction pour charger les projets depuis l'API
+    const loadProjects = async () => {
+        try {
+            setIsLoading(true);
+            const data = await fetchProjects();
+            
+            // On s'assure que l'API renvoie bien un tableau, sinon on met un tableau vide par sécurité
+            if (Array.isArray(data)) {
+                setProjects(data);
+            } else if (data.projects && Array.isArray(data.projects)) {
+                // Au cas où l'API renverrait { projects: [...] }
+                setProjects(data.projects);
+            } else {
+                setProjects([]);
+            }
+        } catch (err) {
+            console.error("Erreur lors du chargement des projets:", err);
+            setError("Impossible de charger les projets.");
+            toast.error("Erreur lors du chargement des projets");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     // Charger les projets au montage du composant
     useEffect(() => {
-        const loadProjects = async () => {
-            try {
-                setIsLoading(true);
-                const data = await fetchProjects();
-                
-                // On s'assure que l'API renvoie bien un tableau, sinon on met un tableau vide par sécurité
-                if (Array.isArray(data)) {
-                    setProjects(data);
-                } else if (data.projects && Array.isArray(data.projects)) {
-                    // Au cas où l'API renverrait { projects: [...] }
-                    setProjects(data.projects);
-                } else {
-                    setProjects([]);
-                }
-            } catch (err) {
-                console.error("Erreur lors du chargement des projets:", err);
-                setError("Impossible de charger les projets.");
-                toast.error("Erreur lors du chargement des projets");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
         loadProjects();
     }, []);
 
-    // Fonction pour ajouter un projet à la liste après sa création réussie
-    const handleProjectCreated = (newProject) => {
-        // Optionnel: si l'API ne renvoie pas tout de suite toutes les infos formatées, 
-        // on peut s'assurer ici qu'on a bien un objet complet pour la carte.
-        setProjects(prevProjects => [...prevProjects, newProject]);
+    // Fonction pour recharger complètement la liste après création
+    const handleProjectCreated = () => {
+        // Au lieu d'ajouter manuellement un faux objet à l'état,
+        // on refait un appel API pour récupérer la liste exacte et à jour depuis la BDD.
+        // Cela garantit que toutes les données (ID auto-incrémenté, dates générées par SQL, etc.) sont correctes.
+        loadProjects();
     };
 
     return (
@@ -54,10 +56,9 @@ const Dashboard = () => {
             <Sidebar projects={projects} />
 
             {/* --- CONTENU PRINCIPAL --- */}
-            <main id="dashboard-content" className="flex-1 flex flex-col h-full overflow-hidden">
+            <main className="flex-1 flex flex-col h-full overflow-hidden">
                 
                 {/* --- HEADER DU DASHBOARD --- */}
-                {/* On passe onProjectCreated ici pour que la modale puisse l'utiliser */}
                 <DashboardHeader 
                     isCreateModalOpen={isCreateModalOpen}
                     setIsCreateModalOpen={setIsCreateModalOpen}
@@ -65,7 +66,7 @@ const Dashboard = () => {
                 />
 
                 {/* --- ZONE DÉFILANTE POUR LES PROJETS --- */}
-                <div className="flex-1 overflow-y-auto p-8">
+                <div id="dashboard-content" className="flex-1 overflow-y-auto p-8 bg-[#F8FAFC]">
                     
                     {/* En-tête de section */}
                     <div className="mb-8 flex items-center justify-between">
@@ -88,9 +89,11 @@ const Dashboard = () => {
                         /* Grille des projets */
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
                             {projects.length > 0 ? (
-                                projects.map((project) => (
-                                    <ProjectCard key={project.id_project || project.id} project={project} />
-                                ))
+                                projects.map((project, index) => {
+                                    // Utilisation d'une clé fallback sécurisée si id_project est absent
+                                    const key = project.id_project || `project-${index}`;
+                                    return <ProjectCard key={key} project={project} />;
+                                })
                             ) : (
                                 <EmptyProjectState searchQuery={""} />
                             )}
