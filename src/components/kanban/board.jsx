@@ -13,7 +13,6 @@ export function Board() {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                // Utilisation de la variable d'environnement pour l'URL de base
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/api/taches`,{
                     method:'GET',
                     credentials: 'include',
@@ -34,7 +33,7 @@ export function Board() {
         fetchTasks();
     }, []);
 
-    // Fonction asynchrone pour mettre à jour la BDD
+    // Fonction pour mettre à jour la BDD
     const updateTaskStatusAPI = async (taskId, newStatus, previousTasksState) => {
         try {
             // Ajout de l'ID de la tâche à la fin de l'URL
@@ -52,10 +51,10 @@ export function Board() {
             }
             
             console.log(`Tâche ${taskId} mise à jour avec succès au statut : ${newStatus}`);
-            // La mise à jour UI a déjà été faite (optimistic update), rien de plus à faire
+            // La mise à jour UI a déjà été faite donc rien de plus à faire
         } catch (error) {
             console.error("Échec de l'appel API :", error);
-            // En cas d'échec de l'API, on restaure l'état précédent des tâches pour que l'UI reste cohérente avec la BDD
+            // En cas d'échec de l'API on restaure l'état précédent des tâches pour que l'UI reste cohérente avec la BDD
             setTasks(previousTasksState);
             alert("Erreur de connexion. Le déplacement de la tâche a été annulé.");
         }
@@ -75,7 +74,7 @@ export function Board() {
         if (!activeContainerId || !overContainerId) return;
         if (activeId === overId && activeContainerId === overContainerId) return; // Dropped on itself
 
-        // Sauvegarder l'état actuel des tâches au cas où l'appel API échouerait (Optimistic Update)
+        // Sauvegarder l'état actuel des tâches au cas où l'appel API échouerait
         const previousTasksState = [...tasks];
 
         setTasks((prevTasks) => {
@@ -102,7 +101,7 @@ export function Board() {
             }
         });
 
-        // Si la tâche a changé de colonne, on déclenche l'appel API en arrière-plan
+        // Si la tâche a changé de colonne on déclenche l'appel API en arrière-plan
         if (activeContainerId !== overContainerId) {
             updateTaskStatusAPI(activeId, overContainerId, previousTasksState);
         }
@@ -125,7 +124,6 @@ export function Board() {
                 <Column id="À faire" tasks={tasks.filter((t) => t.status === 'À faire')} />
                 <Column id="En cours" tasks={tasks.filter((t) => t.status === 'En cours')} />
                 <Column id="Terminé" tasks={tasks.filter((t) => t.status === 'Terminé')} />
-                {/* Ajoutez d'autres colonnes si nécessaire */}
             </div>
         </DndContext>
     )
