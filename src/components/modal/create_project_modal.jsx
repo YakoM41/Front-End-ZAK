@@ -53,20 +53,13 @@ export function CreateProjectModal({ isOpen, setIsOpen, onSuccess }) {
         setIsSubmitting(true)
         try {
             // Appel à l'API
-            const newProjectResponse = await createProject(projectData)
+            await createProject(projectData)
             
             toast.success("Projet créé avec succès !")
             
-            // Si le composant parent a fourni une fonction de callback, on l'appelle
+            // On déclenche le rafraîchissement complet des données dans le Dashboard
             if (onSuccess) {
-                // On s'assure de passer un objet bien formaté même si l'API ne renvoie qu'un message de succès ou un ID
-                // On fusionne les données qu'on vient d'envoyer avec la réponse de l'API
-                const projectForUI = {
-                    ...projectData, // contient project_name et project_desc
-                    project_date: new Date().toISOString(), // Date de création artificielle en attendant le rafraichissement
-                    ...newProjectResponse, // Si l'API renvoie un id_project, il écrasera (ou s'ajoutera) ici
-                };
-                onSuccess(projectForUI)
+                onSuccess()
             }
 
             // Reset form and close modal
