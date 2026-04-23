@@ -1,6 +1,4 @@
 import React from 'react';
-import { exportToPdf } from '../components/tools/exportPdf';
-
 
 const Legal = () => {
     return (
@@ -58,12 +56,6 @@ const Legal = () => {
                     </section>
 
                 </div>
-
-                <footer className="mt-12 pt-6 border-t border-gray-100 text-center">
-                    <button onClick={() => exportToPdf('page', 'mentions-legales-taskflow')} className="text-sm text-blue-600 hover:underline font-medium">
-                        Imprimer ou télécharger en PDF
-                    </button>
-                </footer>
 
             </div>
         </div>

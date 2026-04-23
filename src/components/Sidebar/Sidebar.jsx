@@ -17,7 +17,9 @@ const Sidebar = ({ projects = [] }) => {
         <aside className="w-64 h-screen bg-tf-dark-bg text-tf-text-light flex flex-col border-r border-slate-700/50 sticky top-0">
             {/* --- EN-TÊTE SIDEBAR --- */}
             <div className="p-6 flex items-center gap-3 border-b border-slate-700/50">
+                <a href="/" className="flex items-center gap-3">
                 <img src="/images/logo-taskflow.svg" alt="TaskFlow Logo" className="w-32" />
+                </a>
             </div>
 
             {/* --- NAVIGATION PRINCIPALE --- */}

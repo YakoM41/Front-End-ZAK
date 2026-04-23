@@ -2,7 +2,6 @@ import React from 'react';
 import { Plus } from 'lucide-react';
 import { CreateProjectModal } from '../modal/create_project_modal';
 import { Button } from '@/components/ui/button';
-import { AddMemberModal } from '../modal/add_member_modal'; // IMPORT TEMPORAIRE POUR TESTER
 
 const DashboardHeader = ({ onProjectCreated }) => {
     return (
@@ -13,8 +12,7 @@ const DashboardHeader = ({ onProjectCreated }) => {
             </h1>
 
             <div className="flex items-center gap-4 w-full sm:w-auto">
-                {/* BOUTON TEMPORAIRE POUR VISUALISER LA MODALE ADD MEMBER */}
-                <AddMemberModal projectId="TEST-123" />
+
 
                 {/* La modale enveloppe maintenant le bouton qui sert de déclencheur */}
                 <CreateProjectModal onProjectCreated={onProjectCreated}>

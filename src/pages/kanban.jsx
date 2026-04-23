@@ -46,7 +46,8 @@ const Kanban = () => {
                     setSearchQuery={setSearchQuery}
                 />
 
-                <div className="flex-1 overflow-auto">
+                {/* Ajout de l'ID 'kanban-board' ici pour que l'export PDF fonctionne */}
+                <div id="kanban-board" className="flex-1 overflow-auto">
                     {/* La ref est maintenant passée au composant Board */}
                     <Board ref={boardRef} projectId={projectId} />
                 </div>

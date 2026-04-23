@@ -1,4 +1,3 @@
-import Footer from '/src/components/footer/footer.jsx';
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -147,7 +146,6 @@ const Home = () => {
                     
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };
